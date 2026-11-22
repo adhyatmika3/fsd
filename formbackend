@@ -1,0 +1,241 @@
+
+// FILE NAME: server.js
+
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+
+const app = express();
+
+// MIDDLEWARE
+app.use(cors());
+app.use(express.json());
+
+// MONGODB CONNECTION
+mongoose.connect('YOUR_ATLAS_CONNECTION_STRING')
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.log(err));
+
+// MONGOOSE MODEL
+const studentSchema = new mongoose.Schema({
+  name: String,
+  rollno: Number,
+  dept: String,
+  email: String
+});
+
+const Student = mongoose.model('Student', studentSchema);
+
+// POST - ADD STUDENT
+app.post('/api/students', async (req, res) => {
+  const student = await Student.create(req.body);
+  res.json(student);
+});
+
+// GET - DISPLAY STUDENTS
+app.get('/api/students', async (req, res) => {
+  const students = await Student.find();
+  res.json(students);
+});
+
+// DELETE - DELETE STUDENT
+app.delete('/api/students/:id', async (req, res) => {
+  await Student.findByIdAndDelete(req.params.id);
+  res.json({ message: 'Student deleted' });
+});
+
+// START SERVER
+app.listen(3000, () => {
+  console.log('Server running');
+});
+
+
+
+
+
+
+
+
+
+
+
+// FILE NAME: App.jsx
+
+import { useState } from 'react';
+
+function App() {
+
+  // STORE FORM DATA
+  const [form, setForm] = useState({
+    name: '',
+    rollno: '',
+    dept: '',
+    email: ''
+  });
+
+  // STORE SUBMITTED DETAILS
+  const [students, setStudents] = useState([]);
+
+  // HANDLE ALL INPUT CHANGES
+  function handleChange(e) {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+  }
+
+  // SUBMIT FORM AND SAVE TO MONGODB
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(
+        'http://localhost:3000/api/students',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(form)
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to save student');
+      }
+
+      const data = await response.json();
+
+      setStudents([...students, data]);
+
+      alert('Student Saved Successfully!');
+
+      setForm({
+        name: '',
+        rollno: '',
+        dept: '',
+        email: ''
+      });
+
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-5">
+
+      {/* STUDENT REGISTRATION FORM */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto"
+      >
+
+        <h2 className="text-2xl font-bold text-center mb-5">
+          Student Registration
+        </h2>
+
+        <label>Name</label>
+        <input
+          className="w-full border p-2 mb-3 rounded"
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Roll Number</label>
+        <input
+          className="w-full border p-2 mb-3 rounded"
+          name="rollno"
+          type="number"
+          value={form.rollno}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Department</label>
+        <input
+          className="w-full border p-2 mb-3 rounded"
+          name="dept"
+          value={form.dept}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Email</label>
+        <input
+          className="w-full border p-2 mb-4 rounded"
+          name="email"
+          type="email"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white p-2 rounded"
+        >
+          Submit
+        </button>
+
+      </form>
+
+      {/* DISPLAY SUBMITTED STUDENTS */}
+      <div className="max-w-md mx-auto mt-6">
+
+        {students.map((student, index) => (
+          <div
+            key={student._id}
+            className="bg-white p-4 mb-3 rounded shadow"
+          >
+            <h3 className="font-bold">Student Details</h3>
+            <p>Name: {student.name}</p>
+            <p>Roll No: {student.rollno}</p>
+            <p>Department: {student.dept}</p>
+            <p>Email: {student.email}</p>
+          </div>
+        ))}
+
+      </div>
+
+    </div>
+  );
+}
+
+export default App;
+
+
+
+
+
+
+
+
+
+
+/* FILE NAME: index.css */
+
+@import "tailwindcss";
+
+
+
+
+
+
+// FILE NAME: main.jsx
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <App />
+);
+
+
+
+
+
