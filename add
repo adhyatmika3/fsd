@@ -1,0 +1,63 @@
+import { useState, useEffect } from 'react';
+
+function App() {
+  const [name, setName] = useState('');
+  const [items, setItems] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    console.log('Items changed:', items);
+  }, [items]);
+
+  // ADD ITEM
+  function addItem() {
+    if (!name) return;
+
+    setItems([...items, name]);
+    setName('');
+  }
+
+  // DELETE ITEM
+  function deleteItem(index) {
+    setItems(items.filter((item, i) => i !== index));
+  }
+
+  // ADDITION OF NUMBERS
+  function calculateTotal() {
+    let sum = 0;
+
+    items.forEach((item) => {
+      sum = sum + Number(item);
+    });
+
+    setTotal(sum);
+  }
+
+  return (
+    <div>
+      <h2>Item List</h2>
+
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+
+      <button onClick={addItem}>Add</button>
+
+      {items.map((item, index) => (
+        <p key={index}>
+          {item}
+          <button onClick={() => deleteItem(index)}>
+            Delete
+          </button>
+        </p>
+      ))}
+
+      <button onClick={calculateTotal}>Calculate Total</button>
+
+      <h3>Total: {total}</h3>
+    </div>
+  );
+}
+
+export default App;
