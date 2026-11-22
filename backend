@@ -44,3 +44,36 @@ app.delete('/api/students/:id', async (req, res) => {
 app.listen(3000, () => {
   console.log('Server running');
 });
+
+
+
+
+
+
+
+
+//mongoose vaidtion
+//validation 
+// Student schema with validation
+const studentSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+
+  rollno: {
+    type: Number,
+    required: true
+  },
+
+  dept: {
+    type: String,
+    required: true
+  },
+
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  }
+});
