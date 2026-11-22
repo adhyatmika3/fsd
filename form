@@ -1,0 +1,99 @@
+
+import { useState } from 'react';
+
+function App() {
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    rollno: '',
+    dept: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+    gender: '',
+    terms: false
+  });
+
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleChange(e) {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.type === 'checkbox'
+        ? e.target.checked
+        : e.target.value
+    });
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (form.password !== form.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    setSubmitted(true);
+  }
+
+  return (
+    <div>
+      <h2>Student Registration</h2>
+
+      <form onSubmit={handleSubmit}>
+        <input name="name" placeholder="Name"
+          value={form.name} onChange={handleChange} required />
+
+        <input name="email" type="email" placeholder="Email"
+          value={form.email} onChange={handleChange} required />
+
+        <input name="rollno" placeholder="Roll Number"
+          value={form.rollno} onChange={handleChange} required />
+
+        <input name="dept" placeholder="Department"
+          value={form.dept} onChange={handleChange} required />
+
+        <input name="phone" placeholder="Phone Number"
+          value={form.phone} onChange={handleChange} required />
+
+        <input name="password" type="password" placeholder="Password"
+          value={form.password} onChange={handleChange} required />
+
+        <input name="confirmPassword" type="password"
+          placeholder="Confirm Password"
+          value={form.confirmPassword}
+          onChange={handleChange} required />
+
+        <select name="gender" value={form.gender}
+          onChange={handleChange} required>
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <label>
+          <input type="checkbox" name="terms"
+            checked={form.terms} onChange={handleChange} required />
+          Accept Terms
+        </label>
+
+        <button disabled={!form.terms}>Register</button>
+      </form>
+
+      {submitted && (
+        <div>
+          <h3>Student Details</h3>
+          <p>Name: {form.name}</p>
+          <p>Email: {form.email}</p>
+          <p>Roll Number: {form.rollno}</p>
+          <p>Department: {form.dept}</p>
+          <p>Phone: {form.phone}</p>
+          <p>Gender: {form.gender}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
