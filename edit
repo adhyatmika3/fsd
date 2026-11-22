@@ -1,0 +1,41 @@
+import { useState } from 'react';
+
+function App() {
+  const [student, setStudent] = useState({
+    name: 'aa',
+    rollno: '1',
+    dept: 'it',
+    email: 'aa@gmail.com'
+  });
+
+  const [edit, setEdit] = useState(false);
+
+  return (
+    <div className="p-4 max-w-md mx-auto bg-white shadow rounded">
+      <h2 className="text-xl font-bold">Student Profile</h2>
+
+      {Object.keys(student).map((key) => (
+        <div key={key} className="m-2">
+          <label>{key}</label>
+          <input
+            className="border p-2 w-full"
+            value={student[key]}
+            disabled={!edit}
+            onChange={(e) => setStudent({
+              ...student, [key]: e.target.value
+            })}
+          />
+        </div>
+      ))}
+
+      <button
+        className="bg-blue-500 text-white p-2 rounded"
+        onClick={() => setEdit(!edit)}
+      >
+        {edit ? 'Save' : 'Edit Profile'}
+      </button>
+    </div>
+  );
+}
+
+export default App;
